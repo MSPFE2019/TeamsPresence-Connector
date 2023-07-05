@@ -18,10 +18,6 @@ This guide will walk you through the process of creating an Azure Application Re
 3. Click "New registration" to start creating a new application.
 4. Enter your application's name, choose the supported account types and redirect URI (if applicable).
 5. Click "Register" to finalize the creation of your app.
-
-    ```markdown
-    ![Azure App Registration](link_to_image_of_azure_app_registration)
-    ```
 6. After your app has been created, you will be redirected to your app's dashboard. Here, take note of the Application (client) ID and Directory (tenant) ID as you'll need them later.
 
 ### 2. Granting API Permissions
@@ -31,10 +27,6 @@ This guide will walk you through the process of creating an Azure Application Re
 4. Choose the type of permission your app needs. For accessing Teams user presence information, you'll most likely need "Delegated permissions".
 5. In the search box, enter "Presence.Read.All" to find the necessary permission.
 6. Check the box next to "Presence.Read.All" and click "Add permissions" at the bottom of the panel.
-
-    ```markdown
-    ![API Permissions](link_to_image_of_api_permissions)
-    ```
 7. Back on the "API permissions" page, click "Grant admin consent for {your_directory}".
 
 ### 3. Creating Client Secret
