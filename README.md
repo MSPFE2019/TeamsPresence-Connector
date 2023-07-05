@@ -41,7 +41,7 @@ Now, with your Application (client) ID, Directory (tenant) ID, and client secret
 **Note:** Ensure your Teams users have the necessary permissions set to allow your application to access their presence information.
 
 ## Conclusion
-By following these steps, you should now have an Azure App with rights to access Microsoft Teams user presence information. This guide is written with GitHub Markdown in mind, you can add more images and links as you find necessary for your documentation.
+By following these steps, you should now have an Azure App with rights to access Microsoft Teams user presence information.
 
 For more information, you may refer to the official [Microsoft Documentation](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app).
 
