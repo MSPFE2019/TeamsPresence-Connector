@@ -1,44 +1,52 @@
-Sure, here's a step-by-step guide on how to create an Azure application registration and grant rights to access Teams user presence information:
+# Azure Application Registration & Granting Rights to Teams User Presences Information
 
-Please note that the guide assumes you have appropriate admin access to the Azure portal and Microsoft 365.
+This guide will walk you through the process of creating an Azure Application Registration and granting it rights to access Microsoft Teams user presence information.
 
-### Step 1: Create an Azure AD Application
+## Prerequisites
+- An active Azure account with the necessary privileges to create an application registration.
+- An active Microsoft 365 account with Teams for testing.
 
-1. Log in to the Azure portal (https://portal.azure.com/).
+## Steps
 
-2. Navigate to "Azure Active Directory".
+### 1. Registering a new Azure App
+1. Log in to your Azure account and navigate to the Azure Active Directory section.
+2. From the left sidebar, select "App registrations".
+3. Click "New registration" to start creating a new application.
+4. Enter your application's name, choose the supported account types and redirect URI (if applicable).
+5. Click "Register" to finalize the creation of your app.
 
-3. Click on "App registrations" and then click on "New registration".
+    ```markdown
+    ![Azure App Registration](link_to_image_of_azure_app_registration)
+    ```
+6. After your app has been created, you will be redirected to your app's dashboard. Here, take note of the Application (client) ID and Directory (tenant) ID as you'll need them later.
 
-4. In the Register an application page, enter your application's registration information:
-    - Name: Enter a meaningful application name that will be displayed to users of the app.
-    - Supported account types: Select which accounts you would like your application to support.
-    - Redirect URI: Enter a Redirect URI, if required.
+### 2. Granting API Permissions
+1. From the left sidebar in your app's dashboard, select "API permissions".
+2. Click on the "Add a permission" button.
+3. In the panel that opens, choose "Microsoft Graph".
+4. Choose the type of permission your app needs. For accessing Teams user presence information, you'll most likely need "Delegated permissions".
+5. In the search box, enter "Presence.Read.All" to find the necessary permission.
+6. Check the box next to "Presence.Read.All" and click "Add permissions" at the bottom of the panel.
 
-5. Click "Register" to create the application.
+    ```markdown
+    ![API Permissions](link_to_image_of_api_permissions)
+    ```
+7. Back on the "API permissions" page, click "Grant admin consent for {your_directory}".
 
-### Step 2: Create a Client Secret
+### 3. Creating Client Secret
+1. From the left sidebar in your app's dashboard, select "Certificates & secrets".
+2. Click on the "New client secret" button.
+3. Enter a description for the client secret, select its expiry duration and click "Add".
+4. After the secret is created, make sure to copy its value and store it securely. You will not be able to retrieve it after leaving the page.
 
-1. From the application's Overview page, click on "Certificates & secrets" on the left side navigation.
+### 4. Configuring and Testing Your App
+Now, with your Application (client) ID, Directory (tenant) ID, and client secret, you can authenticate your app and make API calls to Microsoft Graph API to fetch Teams user presence information.
 
-2. Click on "+ New client secret". Add a description for the secret, select a duration, and then click "Add".
+**Note:** Ensure your Teams users have the necessary permissions set to allow your application to access their presence information.
 
-3. Once the client secret is created, note down the Value of the client secret, you will need it later.
+## Conclusion
+By following these steps, you should now have an Azure App with rights to access Microsoft Teams user presence information. This guide is written with GitHub Markdown in mind, you can add more images and links as you find necessary for your documentation.
 
-### Step 3: Grant API Permissions
+For more information, you may refer to the official [Microsoft Documentation](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app).
 
-1. From the application's Overview page, click on "API permissions" on the left side navigation.
-
-2. Click "+ Add a permission", select "Microsoft Graph" and then select "Delegated permissions".
-
-3. In the "Select permissions" section, search for and select "Presence.Read.All" and "Presence.Read".
-
-4. Click "Add permissions" at the bottom.
-
-5. After adding permissions, you'll need to grant admin consent for these permissions. Click on "Grant admin consent for {your organization name}".
-
-### Step 4: Use the Azure AD Application in your application
-
-After the Azure AD application has been created, you can use the Application (client) ID and the client secret that you created to access Teams user presence information through Microsoft Graph API.
-
-The client ID, tenant ID, and client secret will be used to get an access token from the Microsoft Identity platform. This access token will then be used in the Authorization header when making requests to the Graph API.
+**Disclaimer:** Be sure to handle sensitive information such as client secrets with care. Never expose these values in public repositories, logs, or other insecure locations.
