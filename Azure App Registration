@@ -1,0 +1,44 @@
+Sure, here's a step-by-step guide on how to create an Azure application registration and grant rights to access Teams user presence information:
+
+Please note that the guide assumes you have appropriate admin access to the Azure portal and Microsoft 365.
+
+### Step 1: Create an Azure AD Application
+
+1. Log in to the Azure portal (https://portal.azure.com/).
+
+2. Navigate to "Azure Active Directory".
+
+3. Click on "App registrations" and then click on "New registration".
+
+4. In the Register an application page, enter your application's registration information:
+    - Name: Enter a meaningful application name that will be displayed to users of the app.
+    - Supported account types: Select which accounts you would like your application to support.
+    - Redirect URI: Enter a Redirect URI, if required.
+
+5. Click "Register" to create the application.
+
+### Step 2: Create a Client Secret
+
+1. From the application's Overview page, click on "Certificates & secrets" on the left side navigation.
+
+2. Click on "+ New client secret". Add a description for the secret, select a duration, and then click "Add".
+
+3. Once the client secret is created, note down the Value of the client secret, you will need it later.
+
+### Step 3: Grant API Permissions
+
+1. From the application's Overview page, click on "API permissions" on the left side navigation.
+
+2. Click "+ Add a permission", select "Microsoft Graph" and then select "Delegated permissions".
+
+3. In the "Select permissions" section, search for and select "Presence.Read.All" and "Presence.Read".
+
+4. Click "Add permissions" at the bottom.
+
+5. After adding permissions, you'll need to grant admin consent for these permissions. Click on "Grant admin consent for {your organization name}".
+
+### Step 4: Use the Azure AD Application in your application
+
+After the Azure AD application has been created, you can use the Application (client) ID and the client secret that you created to access Teams user presence information through Microsoft Graph API.
+
+The client ID, tenant ID, and client secret will be used to get an access token from the Microsoft Identity platform. This access token will then be used in the Authorization header when making requests to the Graph API.
