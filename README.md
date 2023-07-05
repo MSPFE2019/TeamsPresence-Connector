@@ -1,2 +1,2 @@
 # TeamsPresence-Connector
-A customer connector for the power platform, designed to retrieve any user's Teams Presence Information by providing the user ID number.
+The custom connector has been explicitly programmed to retrieve a user's Teams Presence information - data that indicates the user's availability and status to other users on Microsoft Teams. This encompasses statuses such as Available, Busy, Do Not Disturb, and Away, among others. This information can be accessed by providing the unique user ID number associated with each individual Teams user.
