@@ -1,0 +1,63 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Teams Presence API",
+    "description": "Connects to the Teams Presence API.",
+    "version": "1.0"
+  },
+  "host": "graph.microsoft.com",
+  "basePath": "/",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "/v1.0/communications/presences/": {},
+    "/v1.0/communications/presences//{presence-id}": {},
+    "/v1.0/communications/presences/{presence-id}": {
+      "get": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "summary": "GetUserPresence",
+        "description": "GetUserPresence",
+        "operationId": "GetUserPresence",
+        "parameters": [
+          {
+            "name": "presence-id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "x-ms-visibility": "advanced"
+      }
+    }
+  },
+  "definitions": {},
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {
+    "oauth2-auth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize",
+      "tokenUrl": "https://login.windows.net/common/oauth2/authorize",
+      "scopes": {
+        "Presence.Read.All": "Presence.Read.All"
+      }
+    }
+  },
+  "security": [
+    {
+      "oauth2-auth": [
+        "Presence.Read.All"
+      ]
+    }
+  ],
+  "tags": []
+}
