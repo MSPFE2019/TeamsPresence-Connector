@@ -1,5 +1,3 @@
-Here is your revised text with added links to official Microsoft documents:
-
 The custom connector has been explicitly programmed to retrieve a user's Teams Presence information - data that indicates the user's availability and status to other users on Microsoft Teams. This encompasses statuses such as Available, Busy, Do Not Disturb, and Away, among others. This information can be accessed by providing the unique user ID number associated with each individual Teams user.
 
 [Azure Application Registration](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app) & Granting Rights to Teams User Presences Information
