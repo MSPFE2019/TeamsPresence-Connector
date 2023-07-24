@@ -62,4 +62,5 @@ Steps
 
 You are now able to use this connector in your environment for any power app or power automate. Please note you only need to pass the user's Azure AD id number to the connector to return data.
 
+
 Disclaimer: Be sure to handle sensitive information such as client secrets with care. Never expose these values in public repositories, logs, or other insecure locations.
