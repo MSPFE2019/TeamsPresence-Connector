@@ -2,51 +2,101 @@
   "swagger": "2.0",
   "info": {
     "title": "Teams Presence API",
-    "description": "Connects to the Teams Presence API.",
-    "version": "1.0"
+    "description": "Retrieves the current Microsoft Teams presence for a user by Microsoft Entra object ID.",
+    "version": "1.1"
   },
   "host": "graph.microsoft.com",
   "basePath": "/",
   "schemes": [
     "https"
   ],
-  "consumes": [],
-  "produces": [],
+  "produces": [
+    "application/json"
+  ],
   "paths": {
-    "/v1.0/communications/presences/": {},
-    "/v1.0/communications/presences//{presence-id}": {},
     "/v1.0/communications/presences/{presence-id}": {
       "get": {
-        "responses": {
-          "default": {
-            "description": "default",
-            "schema": {}
-          }
-        },
-        "summary": "GetUserPresence",
-        "description": "GetUserPresence",
+        "tags": [
+          "Presence"
+        ],
+        "summary": "Get user presence",
+        "description": "Returns the availability and activity presence for the specified Microsoft Entra user.",
         "operationId": "GetUserPresence",
+        "x-ms-summary": "Get user presence",
+        "x-ms-visibility": "important",
+        "security": [
+          {
+            "oauth2-auth": [
+              "Presence.Read.All"
+            ]
+          }
+        ],
         "parameters": [
           {
             "name": "presence-id",
             "in": "path",
+            "description": "Microsoft Entra object ID of the user.",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "format": "uuid",
+            "x-ms-summary": "User ID"
           }
         ],
-        "x-ms-visibility": "advanced"
+        "responses": {
+          "200": {
+            "description": "The user's current Teams presence.",
+            "schema": {
+              "$ref": "#/definitions/Presence"
+            }
+          },
+          "400": {
+            "description": "The user ID is invalid."
+          },
+          "401": {
+            "description": "Authentication failed."
+          },
+          "403": {
+            "description": "The connection lacks permission to read presence."
+          },
+          "404": {
+            "description": "The user or presence was not found."
+          },
+          "429": {
+            "description": "The request was throttled. Retry after the duration in the response headers."
+          }
+        }
       }
     }
   },
-  "definitions": {},
+  "definitions": {
+    "Presence": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Microsoft Entra object ID of the user."
+        },
+        "availability": {
+          "type": "string",
+          "description": "Aggregated availability.",
+          "x-ms-summary": "Availability"
+        },
+        "activity": {
+          "type": "string",
+          "description": "Current activity.",
+          "x-ms-summary": "Activity"
+        }
+      }
+    }
+  },
   "parameters": {},
   "responses": {},
   "securityDefinitions": {
     "oauth2-auth": {
       "type": "oauth2",
       "flow": "accessCode",
-      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize",
-      "tokenUrl": "https://login.windows.net/common/oauth2/authorize",
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+      "tokenUrl": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
       "scopes": {
         "Presence.Read.All": "Presence.Read.All"
       }
@@ -58,6 +108,5 @@
         "Presence.Read.All"
       ]
     }
-  ],
-  "tags": []
+  ]
 }
