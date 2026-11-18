@@ -2,8 +2,8 @@
   "swagger": "2.0",
   "info": {
     "title": "Teams Presence API",
-    "description": "Retrieves the current Microsoft Teams presence for a user by Microsoft Entra object ID.",
-    "version": "1.1"
+    "description": "Retrieves Microsoft Teams presence for one or more users by Microsoft Entra object ID.",
+    "version": "1.2"
   },
   "host": "graph.microsoft.com",
   "basePath": "/",
@@ -13,8 +13,11 @@
   "produces": [
     "application/json"
   ],
+  "consumes": [
+    "application/json"
+  ],
   "paths": {
-    "/v1.0/communications/presences/{presence-id}": {
+    "/v1.0/communications/presences/{user-id}": {
       "get": {
         "tags": [
           "Presence"
@@ -33,7 +36,7 @@
         ],
         "parameters": [
           {
-            "name": "presence-id",
+            "name": "user-id",
             "in": "path",
             "description": "Microsoft Entra object ID of the user.",
             "required": true,
@@ -47,22 +50,165 @@
             "description": "The user's current Teams presence.",
             "schema": {
               "$ref": "#/definitions/Presence"
+            },
+            "examples": {
+              "application/json": {
+                "id": "aaaaaaaa-0000-1111-2222-bbbbbbbbbbbb",
+                "availability": "Available",
+                "activity": "Available"
+              }
             }
           },
           "400": {
-            "description": "The user ID is invalid."
+            "$ref": "#/responses/GraphErrorResponse"
           },
           "401": {
-            "description": "Authentication failed."
+            "$ref": "#/responses/GraphErrorResponse"
           },
           "403": {
-            "description": "The connection lacks permission to read presence."
+            "$ref": "#/responses/GraphErrorResponse"
           },
           "404": {
-            "description": "The user or presence was not found."
+            "$ref": "#/responses/GraphErrorResponse"
           },
           "429": {
-            "description": "The request was throttled. Retry after the duration in the response headers."
+            "description": "The request was throttled. Honor Retry-After before retrying.",
+            "headers": {
+              "Retry-After": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Recommended delay before retrying, in seconds."
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/GraphError"
+            },
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "TooManyRequests",
+                  "message": "Please retry the request after the specified delay.",
+                  "innerError": {
+                    "date": "2026-01-01T00:00:00Z",
+                    "request-id": "00000000-0000-0000-0000-000000000000"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/responses/GraphErrorResponse"
+          }
+        }
+      }
+    },
+    "/v1.0/communications/getPresencesByUserId": {
+      "post": {
+        "tags": [
+          "Presence"
+        ],
+        "summary": "Get presence for multiple users",
+        "description": "Returns presence for up to 650 Microsoft Entra users in one request.",
+        "operationId": "GetPresencesByUserId",
+        "x-ms-summary": "Get presence for multiple users",
+        "x-ms-visibility": "important",
+        "security": [
+          {
+            "oauth2-auth": [
+              "Presence.Read.All"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "Microsoft Entra object IDs of up to 650 users.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "ids"
+              ],
+              "properties": {
+                "ids": {
+                  "type": "array",
+                  "minItems": 1,
+                  "description": "Microsoft Entra object IDs (GUIDs). Maximum 650 IDs.",
+                  "maxItems": 650,
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              },
+              "example": {
+                "ids": [
+                  "aaaaaaaa-0000-1111-2222-bbbbbbbbbbbb",
+                  "cccccccc-3333-4444-5555-dddddddddddd"
+                ]
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Presence results for the requested users.",
+            "schema": {
+              "type": "object",
+              "required": [
+                "value"
+              ],
+              "properties": {
+                "value": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Presence"
+                  }
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "value": [
+                  {
+                    "id": "aaaaaaaa-0000-1111-2222-bbbbbbbbbbbb",
+                    "availability": "Available",
+                    "activity": "Available"
+                  },
+                  {
+                    "id": "cccccccc-3333-4444-5555-dddddddddddd",
+                    "availability": "Busy",
+                    "activity": "InACall"
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/GraphErrorResponse"
+          },
+          "401": {
+            "$ref": "#/responses/GraphErrorResponse"
+          },
+          "403": {
+            "$ref": "#/responses/GraphErrorResponse"
+          },
+          "429": {
+            "description": "The request was throttled. Honor Retry-After before retrying.",
+            "headers": {
+              "Retry-After": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Recommended delay before retrying, in seconds."
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/GraphError"
+            }
+          },
+          "500": {
+            "$ref": "#/responses/GraphErrorResponse"
           }
         }
       }
@@ -74,6 +220,7 @@
       "properties": {
         "id": {
           "type": "string",
+          "format": "uuid",
           "description": "Microsoft Entra object ID of the user."
         },
         "availability": {
@@ -87,10 +234,58 @@
           "x-ms-summary": "Activity"
         }
       }
+    },
+    "GraphError": {
+      "type": "object",
+      "description": "Microsoft Graph OData error response.",
+      "required": [
+        "error"
+      ],
+      "properties": {
+        "error": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "properties": {
+            "code": {
+              "type": "string",
+              "description": "Microsoft Graph error code."
+            },
+            "message": {
+              "type": "string",
+              "description": "Human-readable error message."
+            },
+            "innerError": {
+              "type": "object",
+              "description": "Optional diagnostic details, which can include a request ID and timestamp.",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "example": {
+        "error": {
+          "code": "Forbidden",
+          "message": "The request is not authorized.",
+          "innerError": {
+            "request-id": "00000000-0000-0000-0000-000000000000"
+          }
+        }
+      }
     }
   },
   "parameters": {},
-  "responses": {},
+  "responses": {
+    "GraphErrorResponse": {
+      "description": "A Microsoft Graph error response.",
+      "schema": {
+        "$ref": "#/definitions/GraphError"
+      },
+      "x-ms-error-response": true
+    }
+  },
   "securityDefinitions": {
     "oauth2-auth": {
       "type": "oauth2",
