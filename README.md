@@ -31,19 +31,41 @@ necessary, and follow applicable privacy notices, organizational policies, and
 law. The `Presence.Read.All` permission is retained because these operations
 query arbitrary users; it is broader than a self-only permission.
 
+## Create the Microsoft Entra app registration
+
+1. In the [Microsoft Entra admin center](https://entra.microsoft.com/), go to
+   **Identity > Applications > App registrations** and select **New
+   registration**.
+2. Give the app a recognizable name. Choose **Accounts in this organizational
+   directory only** for an internal, single-tenant connector unless your
+   organization requires another supported account type. Complete registration.
+3. On the app's **Overview** page, record the **Application (client) ID** and
+   **Directory (tenant) ID** for the custom connector configuration.
+4. Under **API permissions**, add **Microsoft Graph > Delegated permissions >
+   Presence.Read.All**. This delegated permission is needed to query arbitrary
+   users. Have a tenant administrator grant consent for this permission.
+5. After creating the custom connector, copy its generated redirect URL into
+   the app registration's **Authentication** settings as a **Web** redirect
+   URI.
+6. Create a client secret under **Certificates & secrets** only if the
+   connector's selected OAuth configuration requires one. Store it securely in
+   the connector configuration, set an expiry and rotation plan, and never
+   commit it or any access token to this repository.
+
 ## Import and configure OAuth
 
 1. In Power Automate or Power Apps, open **Data > Custom connectors**.
 2. Select **New custom connector > Import an OpenAPI file** and choose
    `Teams-Presence-API.swagger.json`.
 3. Configure the connector's **Security** settings for **OAuth 2.0** with
-   **Azure Active Directory (Microsoft Entra ID)**. Enter the app's client ID
-   and client secret when requested, and use the authorization, token, refresh,
-   and tenant/resource values supported by the selected connector configuration.
-4. Add the generated redirect URL to the app registration's Web redirect URIs.
-5. In the app registration, add Microsoft Graph **delegated** permission
-   `Presence.Read.All` and obtain the consent required by your tenant.
-6. Save the connector, create a connection, and test with an authorized user's
+   **Azure Active Directory (Microsoft Entra ID)**. Enter the application
+   (client) ID and use the tenant/resource fields or endpoints offered by the
+   selected configuration. Provide the client secret only if requested by the
+   connector designer.
+4. Add the generated redirect URL to the app registration's Web redirect URIs
+   and confirm the delegated `Presence.Read.All` permission and required
+   consent.
+5. Save the connector, create a connection, and test with an authorized user's
    object ID.
 
 The OpenAPI security definition names `Presence.Read.All` and includes
