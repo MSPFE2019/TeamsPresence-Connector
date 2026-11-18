@@ -69,6 +69,33 @@ connector designer and the permission/consent for the connection. Follow
 and your tenant's app-registration requirements. Never commit client secrets
 or tokens to this repository.
 
+## Power Automate flow: group users to presence
+
+The flow reads direct user members from a Microsoft 365 or security group. For
+nested security groups, use the transitive-members endpoint shown below.
+
+```mermaid
+flowchart TD
+  A["Recurrence or manual trigger<br/>Provide group object ID"] --> B{"Include nested security-group users?"}
+  B -- "No: direct members" --> C["GET /groups/{id}/members/microsoft.graph.user"]
+  B -- "Yes: transitive users" --> D["GET /groups/{id}/transitiveMembers/microsoft.graph.user"]
+  C --> E["Follow @odata.nextLink until no pages remain"]
+  D --> E
+  E --> F["Collect and deduplicate user IDs"]
+  F --> G["Split IDs into chunks of at most 650"]
+  G --> H["Apply to each chunk"]
+  H --> I["Teams Presence connector<br/>POST /communications/getPresencesByUserId"]
+  I --> J["Append response.value; return or store results"]
+  I -- "429" --> K["Honor Retry-After; bounded backoff<br/>Retry the same chunk only within the limit"]
+  K --> H
+```
+
+Group enumeration requires a separate Microsoft Graph connection/action with
+delegated `GroupMember.Read.All`; the Teams Presence connector uses delegated
+`Presence.Read.All` and does not enumerate groups. The editable source for this
+diagram is
+[`docs/power-automate-group-presence-flow.excalidraw`](docs/power-automate-group-presence-flow.excalidraw).
+
 ## Examples
 
 Single-user lookup:
